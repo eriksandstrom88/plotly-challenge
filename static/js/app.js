@@ -21,21 +21,21 @@ d3.json("././samples.json").then((data)=> {
     var all_data=data;
     var names=data['names'];
     var metadata=data['metadata'];
-    var samples=data['samples'].slice(0,5);//.map((one_sample)=>one_sample);
+    var samples=data['samples'].slice(0,5);
     var otu_ids=samples[0]['otu_ids'];
     var sample_values=samples[0]['sample_values'];
-    // var sample_values=samples
-    // console.log(otu_ids)
+    var hover_text=samples[0]['otu_labels'];
+    var otu='OTU'
+    var otu_id_labels=otu_ids.map((one_id)=>otu.concat(' ',one_id));
     var trace={
         'type':'bar',
-        'y':otu_ids.slice(0,10),
-        'x':sample_values.slice(0,10),
+        'y':otu_id_labels.slice(0,10).reverse(),
+        'x':sample_values.slice(0,10).reverse(),
+        text:hover_text.slice(0,10).reverse(),
         orientation: 'h'
     };
     var traces=[trace];
     Plotly.newPlot('bar', traces);
-    // 
-    
 });
 
 
