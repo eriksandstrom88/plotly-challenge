@@ -15,7 +15,7 @@
 //             {"id".............}
 //             ]
 // }
-
+var table_body=d3.select("tbody");
 d3.json("././samples.json").then((data)=> {
     // console.log(data);
     var all_data=data;
@@ -34,8 +34,36 @@ d3.json("././samples.json").then((data)=> {
         text:hover_text.slice(0,10).reverse(),
         orientation: 'h'
     };
+    var tracer={
+        'type':'scatter',
+        'x':otu_ids,
+        'y':sample_values,
+        mode:'markers',
+        text:hover_text,
+        marker:{
+            size:sample_values,
+            color:otu_ids
+        }
+    };
+    var bubble_layout={
+        xaxis:{title:{text:'OTU ID'}//,
+        // rangeselector:selectorOptions,
+        // rangeslider:{}
+        }
+        
+    };
+    //populate the bar chart
     var traces=[trace];
     Plotly.newPlot('bar', traces);
+    //populate the demographic table
+    var first_metadata=metadata[0]
+    Object.entries(first_metadata).forEach(([key,value])=>{
+        row=table_body.append('tr');
+        row.append('td').text(key.concat(":",value));
+    });
+    //populate the bubble chart
+    var tracers=[tracer];
+    Plotly.newPlot('bubble',tracers, bubble_layout);
 });
 
 
