@@ -54,6 +54,33 @@ function init() {
         //populate the bubble chart
         var tracers=[tracer];
         Plotly.newPlot('bubble',tracers, bubble_layout);
+
+        //populate the gauge
+        var wfreq = current_metadata[0]['wfreq'];
+        var gauge_trace = [{
+            domain: {x:[0,1],y:[0,1]},
+            value: wfreq,
+            title:{text:"Belly Button Washing Frequency: Scrubs per week"},
+            type:"indicator",
+            textposition: "inside",
+            mode: "gauge+number",
+            //delta:{reference:10},
+            gauge:{
+                axis:{range:[0,9]},
+                steps: [{range:[0,1], color:"white"},
+                        {range:[1,2], color:"lightgray"},
+                        {range:[2,3], color:"lightyellow"},
+                        {range:[3,4], color:"yellow"},
+                        {range:[4,5], color:"gold"},
+                        {range:[5,6], color:"lightgreen"},
+                        {range:[6,7], color:"green"},
+                        {range:[7,8], color:"darkgreen"},
+                        {range:[8,9], color:"blue"},]
+            }
+        }];
+        var gauge_layout = {width: 550, height: 500, margin:{t:0,b:0}};
+        Plotly.newPlot("gauge", gauge_trace, gauge_layout);
+        console.log(wfreq);
     });
 
 };
@@ -69,13 +96,16 @@ function updatePlotly() {
         var metadata=all_data['metadata'];
         var samples=all_data['samples'];
         var current_sample=samples.filter(sample=>sample.id==name_id.toString());
+        var current_metadata=metadata.filter(meta=>meta.id==name_id);
+        var wfreq = current_metadata[0]['wfreq'];
         var otu_ids=current_sample[0]['otu_ids'];
         var sample_values=current_sample[0]['sample_values'];
         var otu_id_labels=otu_ids.map((one_id)=>'OTU'.concat(' ',one_id));
         Plotly.restyle('bar', 'x',[sample_values.slice(0,10).reverse()]);
-        Plotly.restyle('bar', 'y',[otu_id_labels.slice(0,10).reverse()]);//.map(otu_id=>{`OTU ${otu_id}`}).reverse());
+        Plotly.restyle('bar', 'y',[otu_id_labels.slice(0,10).reverse()]);
         Plotly.restyle('bubble', 'x',[otu_ids]);
         Plotly.restyle('bubble', 'y',[sample_values]);
+        Plotly.restyle('gauge', 'value',[wfreq]);
 
         var current_metadata=metadata.filter(meta=>meta.id==name_id);
         Object.entries(current_metadata[0]).forEach(([key,value])=>{
